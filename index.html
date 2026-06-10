@@ -87,6 +87,21 @@
       s.src = STICKER_IMGS[mk.type];
       s.setAttribute('data-name', mk.user);
       s.alt = mk.type;
+      s.addEventListener('mouseenter', ev => {
+        const tt = document.getElementById('tooltip');
+        tt.textContent = mk.user;
+        tt.style.display = 'block';
+        tt.style.left = (ev.clientX + 12) + 'px';
+        tt.style.top = (ev.clientY - 28) + 'px';
+      });
+      s.addEventListener('mousemove', ev => {
+        const tt = document.getElementById('tooltip');
+        tt.style.left = (ev.clientX + 12) + 'px';
+        tt.style.top = (ev.clientY - 28) + 'px';
+      });
+      s.addEventListener('mouseleave', () => {
+        document.getElementById('tooltip').style.display = 'none';
+      });
       wrap.appendChild(s);
     });
   }
@@ -155,13 +170,17 @@
 
   document.addEventListener('mousemove', e => {
     const cd=document.getElementById('cursor-dot'), tt=document.getElementById('tooltip');
+    const onSticker = e.target.classList.contains('placed-sticker-img');
     if (activeSticker){
       cd.style.display='block'; cd.style.left=e.clientX+'px'; cd.style.top=e.clientY+'px';
       if (hoverEl && !hoverEl.classList.contains('empty')){
         tt.style.display='block'; tt.textContent=currentUser||'';
         tt.style.left=(e.clientX+16)+'px'; tt.style.top=(e.clientY-28)+'px';
-      } else tt.style.display='none';
-    } else { cd.style.display='none'; tt.style.display='none'; }
+      } else if(!onSticker){ tt.style.display='none'; }
+    } else {
+      cd.style.display='none';
+      if(!onSticker) tt.style.display='none';
+    }
   });
 
   function deactivate(){
@@ -256,7 +275,7 @@
   .cal-day.empty:hover{background:transparent}
   .cal-day.in-range{background:#F5F4F0}
   .day-num{font-size:13px;font-weight:500;color:#AAAAAA;margin-bottom:6px;user-select:none;pointer-events:none}
-  .stickers-wrap{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;pointer-events:none}
+  .stickers-wrap{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start}
   .placed-sticker{width:22px;height:22px;border-radius:50%;flex-shrink:0;position:relative}
   .placed-sticker[data-name]:hover::after{content:attr(data-name);position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:11px;font-family:'Inter',sans-serif;padding:3px 8px;border-radius:5px;white-space:nowrap;z-index:10;pointer-events:none}
 
@@ -275,7 +294,7 @@
 
 
   .sticker-img{width:28px;height:28px;object-fit:contain;flex-shrink:0}
-  .placed-sticker-img{width:24px;height:24px;object-fit:contain;flex-shrink:0;position:relative;display:inline-block}
+  .placed-sticker-img{width:24px;height:24px;object-fit:contain;flex-shrink:0;position:relative;display:inline-block;cursor:default}
   .placed-sticker-img[data-name]:hover::after{content:attr(data-name);position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:11px;font-family:'Inter',sans-serif;padding:3px 8px;border-radius:5px;white-space:nowrap;z-index:10;pointer-events:none}
 
   #cursor-dot{position:fixed;pointer-events:none;width:44px;height:44px;z-index:999;transform:translate(-50%,-50%);display:none}
